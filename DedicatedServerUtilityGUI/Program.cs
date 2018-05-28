@@ -4,7 +4,7 @@ using System.Linq;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace Test
+namespace DedicatedServerUtilityGUI
 {
     static class Program
     {
@@ -14,10 +14,10 @@ namespace Test
         [STAThread]
         static void Main()
         {
+            Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
-            Application.Run(new Form1());
+            Application.Run(new FrmMainWindow());
         }
-
     }
 }

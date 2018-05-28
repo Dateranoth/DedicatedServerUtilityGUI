@@ -1,4 +1,4 @@
-﻿namespace CSharp.Common
+﻿namespace DedicatedServerUtilityGUI.Common
 {
     partial class FrmHome
     {

@@ -2,17 +2,17 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 using System.Runtime.InteropServices;
-namespace CSharp
+
+namespace DedicatedServerUtilityGUI.Common
 {
-    public class GlobalFunctions
+    public class CommonFunctions
     {
         [DllImport("user32.dll", SetLastError = true)]
         public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
         [DllImport("USER32.DLL")]
         public static extern bool SetForegroundWindow(IntPtr hWnd);
-        public static bool StartServer(ref Process ServerProcess, ref int ID, string Name, string Path, string EXE, string Args)
+        public bool StartServer(ref Process ServerProcess, ref int ID, string Name, string Path, string EXE, string Args)
         {
-            //Process ServerProcess = new Process();
             try
             {
                 if (!System.IO.File.Exists(Path + @"\" + EXE))
@@ -48,9 +48,8 @@ namespace CSharp
             }
         }
 
-        public static bool StopServer(ref Process ServerProcess, ref int ID, string Name, string Command, bool kill = false)
+        public bool StopServer(ref Process ServerProcess, ref int ID, string Name, string Command, bool kill = false)
         {
-           // Process ServerProcess = new Process();
             try
             {
                 if (CheckProcessRunning(ID, Name))
@@ -93,7 +92,7 @@ namespace CSharp
         }
 
 
-        public static bool CheckProcessRunning(int Id, string Name)
+        public bool CheckProcessRunning(int Id, string Name)
         {
             try
             {
@@ -113,7 +112,7 @@ namespace CSharp
             }
         }
 
-        public static string GetProcessName(string EXE)
+        public string GetProcessName(string EXE)
         {
             try
             {
@@ -121,7 +120,6 @@ namespace CSharp
                 int TempLength;
                 TempString = TempString.Trim();
                 TempLength = TempString.Length;
-                //TempString = Strings.Left(TempString, (TempLength - 4));
                 TempString = TempString.Substring(0, (TempLength - 4));
                 return TempString;
             }

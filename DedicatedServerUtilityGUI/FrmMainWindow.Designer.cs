@@ -1,4 +1,4 @@
-﻿namespace CSharp
+﻿namespace DedicatedServerUtilityGUI
 {
     partial class FrmMainWindow
     {
@@ -124,6 +124,7 @@
             this.Controls.Add(this.TestButton);
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.StartButton);
+            this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
             this.Name = "FrmMainWindow";
             this.Text = "DedicatedServerUtilityGUI";
             this.Resize += new System.EventHandler(this.MainWindow_Resize);

@@ -57,14 +57,14 @@
     <Compile Include="Common\FrmMainSettings.Designer.cs">
       <DependentUpon>FrmMainSettings.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalVariables.cs" />
-    <Compile Include="GlobalFunctions.cs" />
-    <Compile Include="Common\FrmMainWindow.cs">
+    <Compile Include="FrmMainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Common\FrmMainWindow.Designer.cs">
+    <Compile Include="FrmMainWindow.Designer.cs">
       <DependentUpon>FrmMainWindow.cs</DependentUpon>
     </Compile>
+    <Compile Include="GlobalVariables.cs" />
+    <Compile Include="Common\CommonFunctions.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Common\FrmHome.resx">
@@ -73,7 +73,7 @@
     <EmbeddedResource Include="Common\FrmMainSettings.resx">
       <DependentUpon>FrmMainSettings.cs</DependentUpon>
     </EmbeddedResource>
-    <EmbeddedResource Include="Common\FrmMainWindow.resx">
+    <EmbeddedResource Include="FrmMainWindow.resx">
       <DependentUpon>FrmMainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">

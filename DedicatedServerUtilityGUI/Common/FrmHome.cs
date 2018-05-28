@@ -8,7 +8,7 @@ using System.Text;
 using System.Threading.Tasks;
 using System.Windows.Forms;
 
-namespace CSharp.Common
+namespace DedicatedServerUtilityGUI.Common
 {
     public partial class FrmHome : UserControl
     {

@@ -2,40 +2,44 @@
 using System.Diagnostics;
 using System.Windows.Forms;
 
-namespace CSharp
+namespace DedicatedServerUtilityGUI
 {
     public partial class FrmMainWindow : Form
     {
         private static System.Timers.Timer PeriodicEventsTimer;
         private Process ServerProcess = new Process();
         private bool ManualStopTriggered = false;
-        
+        private Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
+        private GlobalVariables GlobalVariables = new GlobalVariables();
         public FrmMainWindow()
         {
             InitializeComponent();
             InitializeTimer();
             Startup();
         }
+
         private void Startup()
         {
             // If Not System.IO.Directory.Exists(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\" & Application.ProductName) Then
             // System.IO.Directory.CreateDirectory(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\" & Application.ProductName)
             // End If
+            GlobalVariables.InitializeVariables(ref GlobalVariables);
             MainSettings.Show();
             HomeButton.Hide();
             if (GlobalVariables.AutoStart)
             {
-                if (GlobalFunctions.StartServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
+                int refID = GlobalVariables.ServerID;
+                if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
                 {
                     ServerProcess.EnableRaisingEvents = true;
                     ServerProcess.Exited += ServerProcess_Exited;
-                    //MessageBox.Show("Server Started " + ServerProcess.MainWindowHandle);
                     PeriodicEventsTimer.Start();
                 }
                 else
                 {
                     MessageBox.Show("Server Failed to Start. Check Logs");
                 }
+                GlobalVariables.ServerID = refID;
             }
         }
 
@@ -45,10 +49,11 @@ namespace CSharp
         }
 
 
-        private static void PeriodicEvents(object source, System.Timers.ElapsedEventArgs e)
+        private void PeriodicEvents(object source, System.Timers.ElapsedEventArgs e)
         {
+            //TODO: Add periodic events. ie. check for updates.
             Console.WriteLine("Firing Periodic Events");
-            if (!GlobalFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName))
+            if (CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName))
             {
                 //MessageBox.Show("Server Failed");
             }
@@ -57,7 +62,8 @@ namespace CSharp
         private void StartButton_Click(object sender, EventArgs e)
         {
 
-            if (GlobalFunctions.StartServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
+            int refID = GlobalVariables.ServerID;
+            if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
             {
                 ServerProcess.EnableRaisingEvents = true;
                 ServerProcess.Exited += ServerProcess_Exited;
@@ -70,12 +76,14 @@ namespace CSharp
             {
                 MessageBox.Show("Server Failed to Start. Check Logs");
             }
+            GlobalVariables.ServerID = refID;
 
           
         }
 
         private void ServerProcess_Exited(object sender, EventArgs e)
         {
+            //TODO: Add Restart on Failure
             if (ManualStopTriggered)
             {
                 Console.WriteLine("EVENT: Server Stopped Manually");
@@ -123,12 +131,13 @@ namespace CSharp
             DateTime killTime = now.Add(new TimeSpan(0, 0, 60));
             DateTime nextTime = now.Add(new TimeSpan(0, 0, 10));
             DateTime next = now.Add(new TimeSpan(0, 0, 2));
+            int refID = GlobalVariables.ServerID;
             bool runloop = false;
-            if (GlobalFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName).Equals(false))
+            if (CommonFunctions.CheckProcessRunning(refID, GlobalVariables.ProcessName).Equals(false))
             {
                 Console.WriteLine("Server Not Running");
             }
-            else if (GlobalFunctions.StopServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, false).Equals(true))
+            else if (CommonFunctions.StopServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, false).Equals(true))
             {
                 Console.WriteLine("Server Gracefully Stopped");
             }
@@ -140,7 +149,7 @@ namespace CSharp
             {
                 if (StopServerWorker.CancellationPending)
                 {
-                    GlobalFunctions.StopServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, true);
+                    CommonFunctions.StopServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, true);
                     Console.WriteLine("Server Closed Forcefully");
                     break;
                 }
@@ -149,12 +158,12 @@ namespace CSharp
                     Console.WriteLine("Waiting to Try Closing Again...");
                     if (DateTime.Compare(DateTime.Now, nextTime) > 0)
                     {
-                        if (GlobalFunctions.StopServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, false))
+                        if (CommonFunctions.StopServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, false))
                         {
                             Console.WriteLine("Server Closed Gracefully");
                             break;
                         }
-                        else if (GlobalFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName).Equals(false))
+                        else if (CommonFunctions.CheckProcessRunning(refID, GlobalVariables.ProcessName).Equals(false))
                         {
                             Console.WriteLine("Server Closed Gracefully");
                             break;
@@ -168,12 +177,13 @@ namespace CSharp
                     }
                     else if (DateTime.Compare(DateTime.Now, killTime) > 0)
                     {
-                        if (GlobalFunctions.StopServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, true))
+                        if (CommonFunctions.StopServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerStopCmd, true))
                         {
                             Console.WriteLine("Server Closed Forcefully");
                             break;
                         }
                     }
+                    GlobalVariables.ServerID = refID;
                     next = DateTime.Now.Add(new TimeSpan(0, 0, 2));
                 }
                 
@@ -197,11 +207,9 @@ namespace CSharp
 
         private void MainSettings_Click(object sender, EventArgs e)
         {
-            ChangeScreen("CSharp.Common.FrmMainSettings");
+            ChangeScreen("DedicatedServerUtilityGUI.Common.FrmMainSettings");
             MainSettings.Hide();
             HomeButton.Show();
-
-            //Type.GetType()
         }
 
         public void ChangeScreen(string NewScreen)
@@ -238,9 +246,13 @@ namespace CSharp
         private void HomeButton_Click(object sender, EventArgs e)
         {
             
-            ChangeScreen("CSharp.Common.FrmHome");
+            ChangeScreen("DedicatedServerUtilityGUI.Common.FrmHome");
             HomeButton.Hide();
             MainSettings.Show();
+            if ((CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName).Equals(false)))
+            {
+                GlobalVariables.InitializeVariables(ref GlobalVariables);
+            }
 
         }
 
