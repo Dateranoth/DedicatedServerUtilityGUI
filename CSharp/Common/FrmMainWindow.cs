@@ -4,25 +4,25 @@ using System.Windows.Forms;
 
 namespace CSharp
 {
-    public partial class MainWindow : Form
+    public partial class FrmMainWindow : Form
     {
         private static System.Timers.Timer PeriodicEventsTimer;
         private Process ServerProcess = new Process();
         private bool ManualStopTriggered = false;
-
-        public MainWindow()
+        
+        public FrmMainWindow()
         {
             InitializeComponent();
             InitializeTimer();
             Startup();
-
         }
         private void Startup()
         {
             // If Not System.IO.Directory.Exists(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\" & Application.ProductName) Then
             // System.IO.Directory.CreateDirectory(My.Computer.FileSystem.SpecialDirectories.MyDocuments & "\" & Application.ProductName)
             // End If
-
+            MainSettings.Show();
+            HomeButton.Hide();
             if (GlobalVariables.AutoStart)
             {
                 if (GlobalFunctions.StartServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
@@ -54,7 +54,7 @@ namespace CSharp
             }
         }
 
-        private void Button1_Click(object sender, EventArgs e)
+        private void StartButton_Click(object sender, EventArgs e)
         {
 
             if (GlobalFunctions.StartServer(ref ServerProcess, ref GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
@@ -89,7 +89,7 @@ namespace CSharp
             PeriodicEventsTimer.Stop();
         }
 
-        private void Button2_Click(object sender, EventArgs e)
+        private void StopButton_Click(object sender, EventArgs e)
         {
             if (StopServerWorker.IsBusy.Equals(false))
             {
@@ -97,7 +97,7 @@ namespace CSharp
             }
         }
 
-        private void Button3_Click(object sender, EventArgs e)
+        private void TestButton_Click(object sender, EventArgs e)
         {
             MessageBox.Show(GlobalVariables.ServerPath + @"\" + GlobalVariables.ServerEXE);
             MessageBox.Show(GlobalVariables.ProcessName);
@@ -181,7 +181,7 @@ namespace CSharp
         }
         private void MainWindow_Resize(object sender, EventArgs e)
         {
-            if (this.WindowState == FormWindowState.Minimized)
+            if (WindowState == FormWindowState.Minimized)
             {
                 Hide();
                 notifyIconGC.Visible = true;
@@ -194,6 +194,56 @@ namespace CSharp
             WindowState = FormWindowState.Normal;
             notifyIconGC.Visible = false;
         }
+
+        private void MainSettings_Click(object sender, EventArgs e)
+        {
+            ChangeScreen("CSharp.Common.FrmMainSettings");
+            MainSettings.Hide();
+            HomeButton.Show();
+
+            //Type.GetType()
+        }
+
+        public void ChangeScreen(string NewScreen)
+        {
+            Control ctl = null;
+            Type ctlType;
+            try
+            {
+                if (NewScreen.Contains("FrmMainSettings"))
+                {
+                    Text = "Main Settings";
+                }
+                if (NewScreen.Contains("FrmHome"))
+                {
+                    Text = "Home";
+                }
+                pnlCenter.Controls.Clear();
+                ctlType = Type.GetType(NewScreen);
+                ctl = (Control)Activator.CreateInstance(ctlType);
+
+                pnlCenter.Controls.Add(ctl);
+                ctl.Dock = DockStyle.Fill;
+                ctl.Show();
+                ctl.BringToFront();
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine("ChangeScreen: " + ex.Message);
+            }
+
+
+        }
+
+        private void HomeButton_Click(object sender, EventArgs e)
+        {
+            
+            ChangeScreen("CSharp.Common.FrmHome");
+            HomeButton.Hide();
+            MainSettings.Show();
+
+        }
+
     }
 
 }

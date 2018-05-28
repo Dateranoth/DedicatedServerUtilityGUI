@@ -45,18 +45,36 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Common\FrmHome.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Common\FrmHome.Designer.cs">
+      <DependentUpon>FrmHome.cs</DependentUpon>
+    </Compile>
+    <Compile Include="Common\FrmMainSettings.cs">
+      <SubType>UserControl</SubType>
+    </Compile>
+    <Compile Include="Common\FrmMainSettings.Designer.cs">
+      <DependentUpon>FrmMainSettings.cs</DependentUpon>
+    </Compile>
     <Compile Include="GlobalVariables.cs" />
     <Compile Include="GlobalFunctions.cs" />
-    <Compile Include="Main\MainWindow.cs">
+    <Compile Include="Common\FrmMainWindow.cs">
       <SubType>Form</SubType>
     </Compile>
-    <Compile Include="Main\MainWindow.Designer.cs">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <Compile Include="Common\FrmMainWindow.Designer.cs">
+      <DependentUpon>FrmMainWindow.cs</DependentUpon>
     </Compile>
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <EmbeddedResource Include="Main\MainWindow.resx">
-      <DependentUpon>MainWindow.cs</DependentUpon>
+    <EmbeddedResource Include="Common\FrmHome.resx">
+      <DependentUpon>FrmHome.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\FrmMainSettings.resx">
+      <DependentUpon>FrmMainSettings.cs</DependentUpon>
+    </EmbeddedResource>
+    <EmbeddedResource Include="Common\FrmMainWindow.resx">
+      <DependentUpon>FrmMainWindow.cs</DependentUpon>
     </EmbeddedResource>
     <EmbeddedResource Include="Properties\Resources.resx">
       <Generator>ResXFileCodeGenerator</Generator>

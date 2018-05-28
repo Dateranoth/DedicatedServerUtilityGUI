@@ -8,13 +8,26 @@ namespace CSharp
 {
     public class GlobalVariables
     {
-        public static int ServerID = Properties.Settings.Default.LastProcessID;
-        public static string ServerPath = System.Text.RegularExpressions.Regex.Match(Properties.Settings.Default.ServerPath.Trim(), @"^(.*[^\\])").Value;
-        public static string ServerEXE = Properties.Settings.Default.ServerEXE.Trim();
-        public static string ProcessName = GlobalFunctions.GetProcessName(ServerEXE);
-        public static string ServerArgs = Properties.Settings.Default.ServerStartArguments.Trim();
-        public static string ServerStopCmd = Properties.Settings.Default.ServerStopString.Trim();
-        public static bool AutoStart = Properties.Settings.Default.AutoStart;
+        public static int ServerID;
+        public static string ServerPath;
+        public static string ServerEXE;
+        public static string ProcessName;
+        public static string ServerArgs;
+        public static string ServerStopCmd;
+        public static bool AutoStart;
+
+        public static bool UpdateVariables()
+            {
+            ServerID = Properties.Settings.Default.LastProcessID;
+            ServerPath = System.Text.RegularExpressions.Regex.Match(Properties.Settings.Default.ServerPath.Trim(), @"^(.*[^\\])").Value;
+            ServerEXE = Properties.Settings.Default.ServerEXE.Trim();
+            ProcessName = GlobalFunctions.GetProcessName(ServerEXE);
+            ServerArgs = Properties.Settings.Default.ServerStartArguments.Trim();
+            ServerStopCmd = Properties.Settings.Default.ServerStopString.Trim();
+            AutoStart = Properties.Settings.Default.AutoStart;
+            return true;
+            }
     }
+
 
 }
