@@ -8,6 +8,7 @@ namespace DedicatedServerUtilityGUI
     {
         private static System.Timers.Timer PeriodicEventsTimer;
         private Process ServerProcess = new Process();
+        private bool processRunning = false;
         private bool ManualStopTriggered = false;
         private Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
         private GlobalVariables GlobalVariables = new GlobalVariables();
@@ -26,20 +27,24 @@ namespace DedicatedServerUtilityGUI
             GlobalVariables.InitializeVariables(ref GlobalVariables);
             MainSettings.Show();
             HomeButton.Hide();
-            if (GlobalVariables.AutoStart)
+            if ((CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName)))
             {
-                int refID = GlobalVariables.ServerID;
-                if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
+                ServerProcess = Process.GetProcessById(GlobalVariables.ServerID);
+                ServerProcess.EnableRaisingEvents = true;
+                ServerProcess.Exited += ServerProcess_Exited;
+                PeriodicEventsTimer.Start();
+                processRunning = true;
+            }
+            else if (GlobalVariables.AutoStart)
+            {
+                if (StartServerCommand())
                 {
-                    ServerProcess.EnableRaisingEvents = true;
-                    ServerProcess.Exited += ServerProcess_Exited;
-                    PeriodicEventsTimer.Start();
+                    Console.WriteLine("Server Started");
                 }
                 else
                 {
-                    MessageBox.Show("Server Failed to Start. Check Logs");
+                    Console.WriteLine("Server Failed to Start");
                 }
-                GlobalVariables.ServerID = refID;
             }
         }
 
@@ -53,48 +58,18 @@ namespace DedicatedServerUtilityGUI
         {
             //TODO: Add periodic events. ie. check for updates.
             Console.WriteLine("Firing Periodic Events");
-            if (CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName))
-            {
-                //MessageBox.Show("Server Failed");
-            }
         }
 
         private void StartButton_Click(object sender, EventArgs e)
         {
-
-            int refID = GlobalVariables.ServerID;
-            if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerEXE, GlobalVariables.ServerArgs))
+            if (StartServerCommand())
             {
-                ServerProcess.EnableRaisingEvents = true;
-                ServerProcess.Exited += ServerProcess_Exited;
-                //MessageBox.Show("Server Started " + ServerProcess.MainWindowHandle);
-                PeriodicEventsTimer.Start();
-                Properties.Settings.Default.LastProcessID = GlobalVariables.ServerID;
-                Properties.Settings.Default.Save();
+                Console.WriteLine("Server Started");
             }
             else
             {
                 MessageBox.Show("Server Failed to Start. Check Logs");
-            }
-            GlobalVariables.ServerID = refID;
-
-          
-        }
-
-        private void ServerProcess_Exited(object sender, EventArgs e)
-        {
-            //TODO: Add Restart on Failure
-            if (ManualStopTriggered)
-            {
-                Console.WriteLine("EVENT: Server Stopped Manually");
-                //StopServerWorker.CancelAsync();
-                //throw new NotImplementedException();
-            }
-            else
-            {
-                Console.WriteLine("EVENT: Server Failed!");
-            }
-            PeriodicEventsTimer.Stop();
+            }         
         }
 
         private void StopButton_Click(object sender, EventArgs e)
@@ -107,9 +82,38 @@ namespace DedicatedServerUtilityGUI
 
         private void TestButton_Click(object sender, EventArgs e)
         {
-            MessageBox.Show(GlobalVariables.ServerPath + @"\" + GlobalVariables.ServerEXE);
+            MessageBox.Show(GlobalVariables.ServerPath + @"\" + GlobalVariables.ServerExe);
             MessageBox.Show(GlobalVariables.ProcessName);
             MessageBox.Show(GlobalVariables.ServerPath);
+        }
+
+        private void ServerProcess_Exited(object sender, EventArgs e)
+        {
+            PeriodicEventsTimer.Stop();
+            ServerProcess.Exited -= ServerProcess_Exited;
+            ServerProcess.Close();
+            processRunning = false;
+            if (ManualStopTriggered)
+            {
+                ManualStopTriggered = false;
+                Console.WriteLine("EVENT: Server Stopped Manually");
+            }
+            else if (GlobalVariables.KeepAlive)
+            {
+                Console.WriteLine("EVENT: Server Failed! Attempting Restart!");
+                if (StartServerCommand())
+                {
+                    Console.WriteLine("Server Started");
+                }
+                else
+                {
+                    Console.WriteLine("Server Failed to Start");
+                }
+            }
+            else
+            {
+                Console.WriteLine("EVENT: Server Failed! Auto Restart Disabled!");
+            }
         }
 
         private void InitializeTimer()
@@ -122,6 +126,32 @@ namespace DedicatedServerUtilityGUI
             PeriodicEventsTimer.Elapsed += PeriodicEvents;
         }
 
+        private bool StartServerCommand()
+        {
+            int refID = GlobalVariables.ServerID;
+            if (processRunning)
+            {
+                return true;
+            }
+            else if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerExe, GlobalVariables.ServerArgs))
+            {
+                ServerProcess.EnableRaisingEvents = true;
+                ServerProcess.Exited += ServerProcess_Exited;
+                PeriodicEventsTimer.Start();
+                GlobalVariables.ServerID = refID;
+                GlobalVariables.SavePID(GlobalVariables.ServerID);
+                processRunning = true;
+                return true;
+            }
+            else
+            {
+                GlobalVariables.ServerID = refID;
+                GlobalVariables.SavePID(GlobalVariables.ServerID);
+                return false;
+            }
+            
+        }
+
         private void StopServerWorker_DoWork(object sender, System.ComponentModel.DoWorkEventArgs e)
         { 
             PeriodicEventsTimer.Stop();
@@ -132,7 +162,7 @@ namespace DedicatedServerUtilityGUI
             DateTime nextTime = now.Add(new TimeSpan(0, 0, 10));
             DateTime next = now.Add(new TimeSpan(0, 0, 2));
             int refID = GlobalVariables.ServerID;
-            bool runloop = false;
+            var runLoop = false;
             if (CommonFunctions.CheckProcessRunning(refID, GlobalVariables.ProcessName).Equals(false))
             {
                 Console.WriteLine("Server Not Running");
@@ -143,9 +173,9 @@ namespace DedicatedServerUtilityGUI
             }
             else
             {
-                runloop = true;
+                runLoop = true;
             }
-            while (runloop)
+            while (runLoop)
             {
                 if (StopServerWorker.CancellationPending)
                 {
@@ -198,7 +228,7 @@ namespace DedicatedServerUtilityGUI
             }
         }
 
-        private void notifyIconGC_MouseDoubleClick(object sender, MouseEventArgs e)
+        private void NotifyIconGC_MouseDoubleClick(object sender, MouseEventArgs e)
         {
             Show();
             WindowState = FormWindowState.Normal;
@@ -212,7 +242,7 @@ namespace DedicatedServerUtilityGUI
             HomeButton.Show();
         }
 
-        public void ChangeScreen(string NewScreen)
+        private void ChangeScreen(string NewScreen)
         {
             Control ctl = null;
             Type ctlType;
@@ -255,7 +285,6 @@ namespace DedicatedServerUtilityGUI
             }
 
         }
-
     }
 
 }

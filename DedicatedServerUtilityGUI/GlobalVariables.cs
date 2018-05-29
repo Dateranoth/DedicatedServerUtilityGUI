@@ -9,127 +9,64 @@ namespace DedicatedServerUtilityGUI
     
     public class GlobalVariables
     {
-        //private Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
-        private int serverID;
-        private string serverPath;
-        private string serverEXE;
-        private string processName;
-        private string serverArgs;
-        private string serverStopCmd;
-        private bool autoStart;
-        public int ServerID
-        {
-            get
-            {
-                return serverID;
-            }
-            set
-            {
-                serverID = value;
-            }
-        }
+        // For Program Usage - Saves last Process ID.
+        public int ServerID { get; set; }
+        // User Options
 
-        public string ServerPath
-        {
-            get
-            {
-                return serverPath;
-            }
-            set
-            {
-                serverPath = value;
-            }
-        }
+        public string InstallDirectory { get; set; }
+        public string RelativeExePath { get; set; }
+        public string ServerExe { get; set; }
+        public string ServerArgs { get; set; }
+        public string ServerStopCmd { get; set; }
+        public bool AutoStart { get; set; }
+        public bool KeepAlive { get; set; }
 
-        public string ServerEXE
-        {
-            get
-            {
-                return serverEXE;
-            }
-            set
-            {
-                serverEXE = value;
-            }
-        }
+        //Generated from User Options.
+        public string ServerPath { get; set; }
+        public string ProcessName { get; set; }
 
-        public string ProcessName
-        {
-            get
-            {
-                return processName;
-            }
-            set
-            {
-                processName = value;
-            }
-        }
-
-        public string ServerArgs
-        {
-            get
-            {
-                return serverArgs;
-            }
-            set
-            {
-                serverArgs = value;
-            }
-        }
-
-        public string ServerStopCmd
-        {
-            get
-            {
-                return serverStopCmd;
-            }
-            set
-            {
-                serverStopCmd = value;
-            }
-        }
-
-        public bool AutoStart
-        {
-            get
-            {
-                return autoStart;
-            }
-            set
-            {
-                autoStart = value;
-            }
-        }
         public bool InitializeVariables(ref GlobalVariables myVars)
         {
             Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
+            // For Program Usage - Retrieves Last Process ID.
             myVars.ServerID = Properties.Settings.Default.LastProcessID;
-            myVars.ServerPath = System.Text.RegularExpressions.Regex.Match(Properties.Settings.Default.ServerPath.Trim(), @"^(.*[^\\])").Value;
-            myVars.ServerEXE = Properties.Settings.Default.ServerEXE.Trim();
-            myVars.ProcessName = CommonFunctions.GetProcessName(myVars.ServerEXE);
+
+            // User Options.
+            myVars.InstallDirectory = System.Text.RegularExpressions.Regex.Match(Properties.Settings.Default.InstallDirectory.Trim(), @"([^\\].*[^\\])").Value;
+            myVars.RelativeExePath = System.Text.RegularExpressions.Regex.Match(Properties.Settings.Default.RelativeExePath.Trim(), @"([^\\].*[^\\])").Value;
+            myVars.ServerExe = Properties.Settings.Default.ServerExe.Trim();
             myVars.ServerArgs = Properties.Settings.Default.ServerStartArguments.Trim();
             myVars.ServerStopCmd = Properties.Settings.Default.ServerStopString.Trim();
             myVars.AutoStart = Properties.Settings.Default.AutoStart;
+            myVars.KeepAlive = Properties.Settings.Default.KeepAlive;
+
+            // Generated from User Options.
+            myVars.ServerPath = myVars.InstallDirectory + @"\" + myVars.RelativeExePath;
+            myVars.ProcessName = CommonFunctions.GetProcessName(myVars.ServerExe);
             return true;
         }
 
         public bool SaveSettings(ref GlobalVariables myVars)
         {
             Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
+            // For Program Usage - Saves Last Process ID.
             Properties.Settings.Default.LastProcessID = myVars.ServerID;
-            Properties.Settings.Default.ServerPath = System.Text.RegularExpressions.Regex.Match(myVars.ServerPath.Trim(), @"^(.*[^\\])").Value;
-            Properties.Settings.Default.ServerEXE = myVars.ServerEXE.Trim();
+
+            // Save User Options
+            Properties.Settings.Default.InstallDirectory = System.Text.RegularExpressions.Regex.Match(myVars.InstallDirectory.Trim(), @"([^\\].*[^\\])").Value;
+            Properties.Settings.Default.RelativeExePath = System.Text.RegularExpressions.Regex.Match(myVars.RelativeExePath.Trim(), @"([^\\].*[^\\])").Value;
+            Properties.Settings.Default.ServerExe = myVars.ServerExe.Trim();
             Properties.Settings.Default.ServerStartArguments = myVars.ServerArgs.Trim();
             Properties.Settings.Default.ServerStopString = myVars.ServerStopCmd.Trim();
             Properties.Settings.Default.AutoStart = myVars.AutoStart;
+            Properties.Settings.Default.KeepAlive = myVars.KeepAlive;
             Properties.Settings.Default.Save();
             return true;
         }
 
-        public bool SavePID(ref GlobalVariables myVars)
+        public bool SavePID(int myID)
         {
-            Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
-            Properties.Settings.Default.LastProcessID = myVars.ServerID;
+            Properties.Settings.Default.LastProcessID = myID;
             Properties.Settings.Default.Save();
             return true;
         }

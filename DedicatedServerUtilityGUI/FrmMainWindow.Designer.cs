@@ -42,6 +42,7 @@
             // 
             // StartButton
             // 
+            this.StartButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.StartButton.Location = new System.Drawing.Point(717, 668);
             this.StartButton.Name = "StartButton";
             this.StartButton.Size = new System.Drawing.Size(124, 49);
@@ -52,6 +53,7 @@
             // 
             // StopButton
             // 
+            this.StopButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Right)));
             this.StopButton.Location = new System.Drawing.Point(860, 668);
             this.StopButton.Name = "StopButton";
             this.StopButton.Size = new System.Drawing.Size(124, 49);
@@ -62,6 +64,7 @@
             // 
             // TestButton
             // 
+            this.TestButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.TestButton.Location = new System.Drawing.Point(151, 694);
             this.TestButton.Name = "TestButton";
             this.TestButton.Size = new System.Drawing.Size(75, 23);
@@ -79,7 +82,7 @@
             // 
             this.notifyIconGC.Icon = ((System.Drawing.Icon)(resources.GetObject("notifyIconGC.Icon")));
             this.notifyIconGC.Text = "DedicatedServerUtilityGUI";
-            this.notifyIconGC.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.notifyIconGC_MouseDoubleClick);
+            this.notifyIconGC.MouseDoubleClick += new System.Windows.Forms.MouseEventHandler(this.NotifyIconGC_MouseDoubleClick);
             // 
             // pnlCenter
             // 
@@ -95,6 +98,7 @@
             // 
             // MainSettings
             // 
+            this.MainSettings.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.MainSettings.Location = new System.Drawing.Point(15, 668);
             this.MainSettings.Name = "MainSettings";
             this.MainSettings.Size = new System.Drawing.Size(130, 48);
@@ -105,6 +109,7 @@
             // 
             // HomeButton
             // 
+            this.HomeButton.Anchor = ((System.Windows.Forms.AnchorStyles)((System.Windows.Forms.AnchorStyles.Bottom | System.Windows.Forms.AnchorStyles.Left)));
             this.HomeButton.Location = new System.Drawing.Point(15, 669);
             this.HomeButton.Name = "HomeButton";
             this.HomeButton.Size = new System.Drawing.Size(130, 48);
@@ -125,6 +130,7 @@
             this.Controls.Add(this.StopButton);
             this.Controls.Add(this.StartButton);
             this.Icon = ((System.Drawing.Icon)(resources.GetObject("$this.Icon")));
+            this.MinimumSize = new System.Drawing.Size(800, 600);
             this.Name = "FrmMainWindow";
             this.Text = "DedicatedServerUtilityGUI";
             this.Resize += new System.EventHandler(this.MainWindow_Resize);

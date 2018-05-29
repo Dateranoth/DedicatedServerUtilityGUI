@@ -37,25 +37,25 @@ namespace DedicatedServerUtilityGUI.Properties {
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
-        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Game_Servers\\conan_exiles_server\\ConanSandbox\\Binaries\\Win64\\\\\\\\\\\\\\\\\\\\")]
-        public string ServerPath {
+        [global::System.Configuration.DefaultSettingValueAttribute("ConanSandbox\\Binaries\\Win64\\")]
+        public string RelativeExePath {
             get {
-                return ((string)(this["ServerPath"]));
+                return ((string)(this["RelativeExePath"]));
             }
             set {
-                this["ServerPath"] = value;
+                this["RelativeExePath"] = value;
             }
         }
         
         [global::System.Configuration.UserScopedSettingAttribute()]
         [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
         [global::System.Configuration.DefaultSettingValueAttribute("ConanSandboxServer-Win64-Test.exe")]
-        public string ServerEXE {
+        public string ServerExe {
             get {
-                return ((string)(this["ServerEXE"]));
+                return ((string)(this["ServerExe"]));
             }
             set {
-                this["ServerEXE"] = value;
+                this["ServerExe"] = value;
             }
         }
         
@@ -92,6 +92,42 @@ namespace DedicatedServerUtilityGUI.Properties {
             }
             set {
                 this["AutoStart"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Game_Servers\\conan_exiles_server")]
+        public string InstallDirectory {
+            get {
+                return ((string)(this["InstallDirectory"]));
+            }
+            set {
+                this["InstallDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("F:\\Steam")]
+        public string SteamDirectory {
+            get {
+                return ((string)(this["SteamDirectory"]));
+            }
+            set {
+                this["SteamDirectory"] = value;
+            }
+        }
+        
+        [global::System.Configuration.UserScopedSettingAttribute()]
+        [global::System.Diagnostics.DebuggerNonUserCodeAttribute()]
+        [global::System.Configuration.DefaultSettingValueAttribute("False")]
+        public bool KeepAlive {
+            get {
+                return ((bool)(this["KeepAlive"]));
+            }
+            set {
+                this["KeepAlive"] = value;
             }
         }
     }

@@ -1,22 +1,23 @@
 ﻿using System;
 using System.Diagnostics;
 using System.Windows.Forms;
-using System.Runtime.InteropServices;
 
 namespace DedicatedServerUtilityGUI.Common
 {
     public class CommonFunctions
+        
     {
-        [DllImport("user32.dll", SetLastError = true)]
-        public static extern IntPtr FindWindow(string lpClassName, string lpWindowName);
-        [DllImport("USER32.DLL")]
-        public static extern bool SetForegroundWindow(IntPtr hWnd);
         public bool StartServer(ref Process ServerProcess, ref int ID, string Name, string Path, string EXE, string Args)
         {
+            
             try
             {
+                
                 if (!System.IO.File.Exists(Path + @"\" + EXE))
+                {
                     throw new Exception("File Does Not Exist at " + Path + @"\" + EXE);
+                }
+
                 if (CheckProcessRunning(ID, Name))
                 {
                     // Process Exists
@@ -36,9 +37,13 @@ namespace DedicatedServerUtilityGUI.Common
                     ServerProcess.WaitForInputIdle();
                     ID = ServerProcess.Id;
                     if (ServerProcess.WaitForInputIdle(10000))
+                    {
                         return true;
+                    }
                     else
+                    {
                         throw new Exception("Process Failed to Start after 10 Seconds");
+                    }
                 }
             }
             catch (Exception ex)
@@ -63,7 +68,7 @@ namespace DedicatedServerUtilityGUI.Common
                     }
                     else
                     {
-                        SetForegroundWindow(hWnd);
+                        NativeMethods.SetForegroundWindow(hWnd);
                         SendKeys.SendWait(Command);
                     }
                     ServerProcess.WaitForExit(1000);

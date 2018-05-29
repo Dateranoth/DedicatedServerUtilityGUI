@@ -5,10 +5,10 @@
     <Setting Name="LastProcessID" Type="System.Int32" Scope="User">
       <Value Profile="(Default)">0</Value>
     </Setting>
-    <Setting Name="ServerPath" Type="System.String" Scope="User">
-      <Value Profile="(Default)">F:\Game_Servers\conan_exiles_server\ConanSandbox\Binaries\Win64\\\\\\\\\\</Value>
+    <Setting Name="RelativeExePath" Type="System.String" Scope="User">
+      <Value Profile="(Default)">ConanSandbox\Binaries\Win64\</Value>
     </Setting>
-    <Setting Name="ServerEXE" Type="System.String" Scope="User">
+    <Setting Name="ServerExe" Type="System.String" Scope="User">
       <Value Profile="(Default)">ConanSandboxServer-Win64-Test.exe</Value>
     </Setting>
     <Setting Name="ServerStartArguments" Type="System.String" Scope="User">
@@ -18,6 +18,15 @@
       <Value Profile="(Default)">^C</Value>
     </Setting>
     <Setting Name="AutoStart" Type="System.Boolean" Scope="User">
+      <Value Profile="(Default)">False</Value>
+    </Setting>
+    <Setting Name="InstallDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">F:\Game_Servers\conan_exiles_server</Value>
+    </Setting>
+    <Setting Name="SteamDirectory" Type="System.String" Scope="User">
+      <Value Profile="(Default)">F:\Steam</Value>
+    </Setting>
+    <Setting Name="KeepAlive" Type="System.Boolean" Scope="User">
       <Value Profile="(Default)">False</Value>
     </Setting>
   </Settings>
