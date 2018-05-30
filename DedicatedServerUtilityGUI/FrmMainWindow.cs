@@ -12,6 +12,7 @@ namespace DedicatedServerUtilityGUI
         private bool ManualStopTriggered = false;
         private Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
         private GlobalVariables GlobalVariables = new GlobalVariables();
+
         public FrmMainWindow()
         {
             InitializeComponent();
@@ -27,15 +28,7 @@ namespace DedicatedServerUtilityGUI
             GlobalVariables.InitializeVariables(ref GlobalVariables);
             MainSettings.Show();
             HomeButton.Hide();
-            if ((CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName)))
-            {
-                ServerProcess = Process.GetProcessById(GlobalVariables.ServerID);
-                ServerProcess.EnableRaisingEvents = true;
-                ServerProcess.Exited += ServerProcess_Exited;
-                PeriodicEventsTimer.Start();
-                processRunning = true;
-            }
-            else if (GlobalVariables.AutoStart)
+            if (GlobalVariables.AutoStart)
             {
                 if (StartServerCommand())
                 {
@@ -45,6 +38,15 @@ namespace DedicatedServerUtilityGUI
                 {
                     Console.WriteLine("Server Failed to Start");
                 }
+            }
+            else if ((CommonFunctions.CheckProcessRunning(GlobalVariables.ServerID, GlobalVariables.ProcessName)))
+            {
+                ServerProcess = Process.GetProcessById(GlobalVariables.ServerID);
+                ServerProcess.EnableRaisingEvents = true;
+                ServerProcess.Exited += ServerProcess_Exited;
+                PeriodicEventsTimer.Start();
+                processRunning = true;
+                Console.WriteLine("Attached to Running Server Process");
             }
         }
 
@@ -128,25 +130,25 @@ namespace DedicatedServerUtilityGUI
 
         private bool StartServerCommand()
         {
-            int refID = GlobalVariables.ServerID;
             if (processRunning)
             {
                 return true;
             }
-            else if (CommonFunctions.StartServer(ref ServerProcess, ref refID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerExe, GlobalVariables.ServerArgs))
+            else if (CommonFunctions.StartServer(ref ServerProcess, GlobalVariables.ServerID, GlobalVariables.ProcessName, GlobalVariables.ServerPath, GlobalVariables.ServerExe, GlobalVariables.ServerArgs))
             {
                 ServerProcess.EnableRaisingEvents = true;
                 ServerProcess.Exited += ServerProcess_Exited;
                 PeriodicEventsTimer.Start();
-                GlobalVariables.ServerID = refID;
+                GlobalVariables.ServerID = ServerProcess.Id;
                 GlobalVariables.SavePID(GlobalVariables.ServerID);
                 processRunning = true;
                 return true;
             }
             else
             {
-                GlobalVariables.ServerID = refID;
+                GlobalVariables.ServerID = 0;
                 GlobalVariables.SavePID(GlobalVariables.ServerID);
+                processRunning = false;
                 return false;
             }
             

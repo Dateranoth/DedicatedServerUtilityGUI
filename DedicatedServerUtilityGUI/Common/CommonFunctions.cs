@@ -7,7 +7,7 @@ namespace DedicatedServerUtilityGUI.Common
     public class CommonFunctions
         
     {
-        public bool StartServer(ref Process ServerProcess, ref int ID, string Name, string Path, string EXE, string Args)
+        public bool StartServer(ref Process ServerProcess, int ID, string Name, string Path, string EXE, string Args)
         {
             
             try
@@ -34,9 +34,8 @@ namespace DedicatedServerUtilityGUI.Common
                     ServerProcess.StartInfo.Arguments = Args;
                     ServerProcess.StartInfo.WorkingDirectory = Path;
                     ServerProcess.Start();
-                    ServerProcess.WaitForInputIdle();
-                    ID = ServerProcess.Id;
-                    if (ServerProcess.WaitForInputIdle(10000))
+                    ServerProcess.WaitForInputIdle(1000);
+                    if (ServerProcess.Responding)
                     {
                         return true;
                     }
@@ -96,7 +95,7 @@ namespace DedicatedServerUtilityGUI.Common
             }
         }
 
-
+        
         public bool CheckProcessRunning(int Id, string Name)
         {
             try
