@@ -4,10 +4,10 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 
-namespace DedicatedServerUtilityGUI
+namespace DedicatedServerUtilityGUI.Common
 {
     
-    public class GlobalVariables
+    public class Settings
     {
         // For Program Usage - Saves last Process ID.
         public int ServerID { get; set; }
@@ -25,9 +25,9 @@ namespace DedicatedServerUtilityGUI
         public string ServerPath { get; set; }
         public string ProcessName { get; set; }
 
-        public bool InitializeVariables(ref GlobalVariables myVars)
+        public bool InitializeVariables(ref Settings myVars)
         {
-            Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
+            Common.Methods CommonMethods = new Common.Methods();
             // For Program Usage - Retrieves Last Process ID.
             myVars.ServerID = Properties.Settings.Default.LastProcessID;
 
@@ -42,13 +42,12 @@ namespace DedicatedServerUtilityGUI
 
             // Generated from User Options.
             myVars.ServerPath = myVars.InstallDirectory + @"\" + myVars.RelativeExePath;
-            myVars.ProcessName = CommonFunctions.GetProcessName(myVars.ServerExe);
+            myVars.ProcessName = CommonMethods.GetProcessName(myVars.ServerExe);
             return true;
         }
 
-        public bool SaveSettings(ref GlobalVariables myVars)
+        public bool SaveSettings(ref Settings myVars)
         {
-            Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
             // For Program Usage - Saves Last Process ID.
             Properties.Settings.Default.LastProcessID = myVars.ServerID;
 

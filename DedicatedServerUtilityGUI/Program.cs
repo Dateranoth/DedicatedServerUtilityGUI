@@ -11,7 +11,7 @@ namespace DedicatedServerUtilityGUI
         [STAThread]
         static void Main()
         {
-            Common.CommonFunctions CommonFunctions = new Common.CommonFunctions();
+            Common.Methods CommonFunctions = new Common.Methods();
             Application.EnableVisualStyles();
             Application.SetCompatibleTextRenderingDefault(false);
             Application.Run(new FrmMainWindow());

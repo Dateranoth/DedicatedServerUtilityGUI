@@ -7,7 +7,7 @@ namespace DedicatedServerUtilityGUI.Common
     {
         //TODO: Determine if more base settings are required.
         //TODO: Add Upgrade Button and Reset to Default Button.
-        private GlobalVariables mySettings = new GlobalVariables();
+        private Settings mySettings = new Settings();
         
         public FrmMainSettings()
         {

@@ -82,8 +82,8 @@
     <Compile Include="FrmMainWindow.Designer.cs">
       <DependentUpon>FrmMainWindow.cs</DependentUpon>
     </Compile>
-    <Compile Include="GlobalVariables.cs" />
-    <Compile Include="Common\CommonFunctions.cs" />
+    <Compile Include="Common\Settings.cs" />
+    <Compile Include="Common\Methods.cs" />
     <Compile Include="Program.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <EmbeddedResource Include="Common\FrmHome.resx">

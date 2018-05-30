@@ -4,7 +4,7 @@ using System.Windows.Forms;
 
 namespace DedicatedServerUtilityGUI.Common
 {
-    public class CommonFunctions
+    public class Methods
         
     {
         public bool StartServer(ref Process ServerProcess, int ID, string Name, string Path, string EXE, string Args)
@@ -52,46 +52,80 @@ namespace DedicatedServerUtilityGUI.Common
             }
         }
 
-        public bool StopServer(ref Process ServerProcess, ref int ID, string Name, string Command, bool kill = false)
+        public int StopServer(ref Process ServerProcess, int ID, string Name, string Command, int killTime = 120000, bool force = false, bool kill = false)
         {
+            // -1 = Error
+            // 0 = Process was not running. 
+            // 1 = Process Closed Gracefully.
+            // 2 = Process Window Forced Closed.
+            // 3 = Process Killed.
             try
             {
                 if (CheckProcessRunning(ID, Name))
                 {
-                    // Process Exists
+                    int nextTime = (killTime / 4);
+                    int forceTime = (killTime / 2);
+                    int totalTime = 0;
                     ServerProcess = Process.GetProcessById(ID);
-                    IntPtr hWnd = ServerProcess.MainWindowHandle;
+                    
+                    TryAgain:
                     if (kill)
                     {
                         ServerProcess.Kill();    
                     }
+                    else if (force)
+                    {
+                        ServerProcess.CloseMainWindow();
+                    }
                     else
                     {
+                        IntPtr hWnd = ServerProcess.MainWindowHandle;
                         NativeMethods.SetForegroundWindow(hWnd);
                         SendKeys.SendWait(Command);
                     }
-                    ServerProcess.WaitForExit(1000);
-                    if (CheckProcessRunning(ID, Name))
+
+                    ServerProcess.WaitForExit(nextTime);
+                    totalTime += nextTime;
+                    if (!(CheckProcessRunning(ID, Name)) || (kill))
                     {
-                        return false;              
+                        if (kill)
+                        {
+                            return 3;
+                        }
+                        else if (force)
+                        {
+                            return 2;
+                        }
+                        else
+                        {
+                            return 1;
+                        }
+                    }
+                    else if (totalTime >= killTime)
+                    {
+                        kill = true;
+                        goto TryAgain;
+                    }
+                    else if (totalTime >= forceTime)
+                    {
+                        force = true;
+                        goto TryAgain;
                     }
                     else
                     {
-                        ID = 0;
-                        return true;
+                        goto TryAgain;
                     }
                 }
                 else
                 {
-                    ID = 0;
-                    return true;
+                    return 0;
                 }
 
             }
             catch (Exception ex)
             {
                 Console.WriteLine("StopServer Error: " + ex.Message);
-                return false;
+                return -1;
             }
         }
 
